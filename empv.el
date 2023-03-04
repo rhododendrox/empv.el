@@ -125,6 +125,11 @@ If it's nil, then downloading thumbnails are disabled."
           (const :value "end"))
   :group 'empv)
 
+(defcustom empv-youtube-thumbnail-dir (or (getenv "XDG_CACHE_HOME") "~/.cache")
+  "The directory in which download youtube thumbnails."
+  :type 'directory
+  :group 'empv)
+
 (defcustom empv-audio-dir (or (getenv "XDG_MUSIC_DIR") "~/Music")
   "The directory (or list of directories) that you keep your music in."
   :type '(choice (directory :tag "Audio directory")
@@ -1705,7 +1710,7 @@ Limit directory treversal at most DEPTH levels.  By default it's
        (let* ((video-info (cdr video))
               (video-id (alist-get 'videoId video-info))
               (filename (format
-                         (expand-file-name "~/.cache/empv_%s_%s.jpg")
+                         (expand-file-name (concat empv-youtube-thumbnail-dir "/empv_%s_%s.jpg"))
                          video-id
                          empv-youtube-thumbnail-quality))
               (thumb-url (thread-last
@@ -1724,6 +1729,7 @@ Limit directory treversal at most DEPTH levels.  By default it's
                       (if empv-allow-insecure-connections
                           "--insecure" nil)
                       "-L"
+                      "--create-dirs"
                       "-o"
                       filename
                       thumb-url))))
